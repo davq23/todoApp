@@ -1,0 +1,36 @@
+
+.fadeoutFast {
+    animation: fadeout 1s;
+    animation-iteration-count: infinite;
+}
+
+.FormBox {
+    width: 25rem;
+    height: 18rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border-width: 0.5px;
+    border-style: solid;
+    border-color: gray;
+    box-shadow: 1rem;
+}
+
+.DashboardGrid {
+    display: grid;
+    grid-template-columns: 30% auto;
+    grid-template-rows: 30% auto;
+    column-gap: 1vw;
+    row-gap: 1vh;
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
