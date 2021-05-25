@@ -33,14 +33,20 @@ $routes->setAutoRoute(false);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+$routes->get('api/users/get/(:num)', 'UserController::getAll/$1', ['filter' => 'sessionauth']);
+
 $routes->post('api/login/', 'Login::post', ['filters' => 'sessionauth:noauth']);
 $routes->post('api/logout/', 'Logout::post', ['filters' => 'sessionauth']);
 
 $routes->post('api/users/new', 'UserController::post', ['filter' => 'sessionauth:noauth']);
 $routes->post('api/auth/', 'IsAuth::auth', ['filter' => 'sessionauth']);
 
+$routes->group('api/tasks', ['filter' => 'sessionauth'], function($taskRoutes) {
+	$taskRoutes->get('get/(:num)', 'Task::fetchAllTask/$1');
+	$taskRoutes->get('get/user/(:num)', 'Task::fetchAllTaskFromUser/$1');
+	$taskRoutes->post('new', 'Task::insertTask');
+});
 
-$routes->get('api/users/get/(:num)', 'UserController::getAll/$1', ['filter' => 'sessionauth']);
 
 
 /*
