@@ -15,8 +15,9 @@ function App() {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: '100vw',
-    minHeight: '85vh'
+    minWidth: '100%',
+    minHeight: '100%',
+    width: '100%'
   }
 
   const navbarStyle = {
@@ -71,7 +72,7 @@ function App() {
               }
             </Toolbar>
           </AppBar>
-          <Container style={containerStyle}>
+          <Container style={containerStyle} className="noPaddingMargin">
             <Routes />
           </Container>
         </Router>
