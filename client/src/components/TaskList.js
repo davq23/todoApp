@@ -12,16 +12,59 @@ import { selectUser } from '../slices/userslice';
 const TaskList = (props) => {
     const [editTask, setEditTask] = useState(null);
     const [disableRows, setDisableRows] = useState(false);
+    const [tasks, setTasks] = useState({});
 
-    const tasks = useSelector(selectTasks);
+    const transformTaskArrayToObject = (taskArray) => {
+        const taskObject = {};
+
+        taskArray.forEach(function(task) {
+            taskObject[task.taskID] = task;
+        });
+
+        setTasks(taskObject);
+    }
+
+    const addTask = (task) => {
+        setTasks({...tasks, [task.taskID]: task});
+    }
+
+    const deleteTaskState = (taskID) => {
+        const taskObject = {
+            ...tasks,
+        };
+
+        delete taskObject[taskID];
+
+        setTasks(taskObject);
+    }
+
+    const updateTaskState = (done) => {
+        const taskObject = {
+            ...tasks,
+        }
+
+        taskObject[task.taskID] = task;
+
+        setTasks(taskObject);
+    }
+
+    const updateTaskDone = (taskID) => {
+        const taskObject = {
+            ...tasks,
+        }
+
+        taskObject[task.taskID].taskDone = '1';
+
+        setTasks(taskObject);
+    }
+
     const currentUser = useSelector(selectUser);
-    const dispatch = useDispatch();
 
     const fetchTasks = () => {
         axios.get(`${process.env.REACT_APP_API_URL}/api/tasks/get/user/${currentUser}`, {
             withCredentials: true
         }).then((response) => {
-            dispatch(addAll(response.data));
+            transformTaskArrayToObject(response.data);
         }).catch((response) => {
             if (response.status == 401) {
             }
@@ -36,7 +79,7 @@ const TaskList = (props) => {
         }).then((response) => {
             setDisableRows(false);
 
-            dispatch(deleteOne({taskID: taskID}));
+            deleteTaskState(taskID);
         }).catch((response) => {
             setDisableRows(false);
 
@@ -55,7 +98,7 @@ const TaskList = (props) => {
             }).then((response) => {
                 setDisableRows(false);
 
-                dispatch(setDone(taskID));
+                updateTaskDone(response.data)
             }).catch((response) => {
                 setDisableRows(false);
     
@@ -127,7 +170,8 @@ const TaskList = (props) => {
                         </TableRow>
                     }
                 </TableBody>
-                <TaskForm selectedTask={editTask} setSelectedTask={setEditTask} />
+                <TaskForm selectedTask={editTask} setSelectedTask={setEditTask} 
+                    editTask={updateTaskState} addTask={addTask} />
             </Table>
            
         </TableContainer>
