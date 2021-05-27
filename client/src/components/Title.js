@@ -13,7 +13,7 @@ const Title = () => {
                 {`Welcome ${username}!`}
             </Typography>
             <Typography variant="h4">
-                {`Choose your TODO's`}
+                {`Here are your TODO's`}
             </Typography>
         </Fragment>
     )
