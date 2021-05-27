@@ -146,8 +146,8 @@ class Task extends BaseController
 
         if (is_array($result)) {
             return  $this->failValidationErrors([
-                'taskName' => $result['tsk_name'],
-                'taskDescription' => $result['tsk_description']
+                'taskName' => isset($result['tsk_name']) ? $result['tsk_name'] : null,
+                'taskDescription' => isset($result['tsk_description']) ? $result['tsk_description'] : null
             ]);
         }
 
