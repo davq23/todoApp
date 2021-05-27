@@ -17,7 +17,7 @@ class Login extends BaseController {
         $result = $userModel->where('u_name', $userInfo->username)
                             ->first();
 
-        if (!password_verify($userInfo->password, $result['u_password'])) {
+        if (!isset($result['u_password']) || !password_verify($userInfo->password, $result['u_password'])) {
             return $this->failUnauthorized();
         }
         
