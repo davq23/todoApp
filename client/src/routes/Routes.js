@@ -10,7 +10,6 @@ import axios from "axios";
 import {login, logout} from "../slices/userslice";
 import Dashboard from "../components/Dashboard";
 import '../main.css';
-import { API_URL } from "../constants";
 
 
 function Routes() {
