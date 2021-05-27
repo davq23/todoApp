@@ -18,6 +18,8 @@ class TaskModel extends Model {
         'tsk_user'
     ];
 
+    protected $beforeUpdate = ['setUpdatedAt'];
+
     protected $validationRules = [
         'tsk_name' => 'required|min_length[10]|max_length[120]',
         'tsk_description' => 'max_length[255]',
@@ -101,5 +103,13 @@ class TaskModel extends Model {
         }
 
         return false;
+    }
+
+    protected function setUpdatedAt($data) {
+        $currentDateTime = new \DateTime();
+
+        $data['data']['tsk_u_updated_at'] = $currentDateTime->format('Y-m-d H:i:s');
+
+        return $data;
     }
 }
