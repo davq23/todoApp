@@ -6,7 +6,6 @@ import axios from "axios";
 import {useSelector, useDispatch} from 'react-redux';
 import Task from "../models/Task";
 import { save, selectTasks } from '../slices/taskslice';
-import { API_URL } from '../constants';
 
 const TaskForm = (props) => {
     const popperID = 'editDescriptionPopper';
