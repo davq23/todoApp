@@ -57,16 +57,16 @@ function App() {
                 !currentUser ? 
                 <Fragment>
                   <Typography  style={navbarItems} variant="h6">
-                    <Link to="/login">Login</Link>
+                    <Link to={`${process.env.REACT_APP_ROUTE_PREFIX}/login`}>Login</Link>
                   </Typography>
                   <Typography  style={navbarItems} variant="h6">
-                    <Link to="/signin">Signin</Link>
+                    <Link to={`${process.env.REACT_APP_ROUTE_PREFIX}/signin`}>Signin</Link>
                   </Typography>
                 </Fragment>
                 :
                 <Fragment>
                   <Typography style={navbarItems} variant="h6">
-                    <Link to="/">Home</Link>
+                    <Link to={`${process.env.REACT_APP_ROUTE_PREFIX}/`}>Home</Link>
                   </Typography>
                   <Button style={navbarItems} onClick={logoutHandler} variant="contained" type="submit" color="secondary">Logout</Button>
                 </Fragment>
