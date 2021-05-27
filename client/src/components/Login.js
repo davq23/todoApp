@@ -41,7 +41,7 @@ const Login = () => {
 
         setDisableInputs(true);
 
-        axios.post('http://localhost/react-1/server/public/api/login', credentials, {
+        axios.post(`${process.env.REACT_APP_API_URL}/api/login`, credentials, {
             withCredentials: true,
         })
             .then((response) => {

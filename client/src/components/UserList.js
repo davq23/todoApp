@@ -7,7 +7,7 @@ const UserList = (props) => {
     const [listLoaded, setListLoaded] = useState(false);
 
     const fetchUsers = () => {
-        axios.get('http://localhost/react-1/server/public/api/users/get/'+props.limit, {
+        axios.get(`${process.env.REACT_APP_API_URL}/api/users/get/${props.limit}`, {
             withCredentials: true
         }).then((response) => {
             setList(response.data);
@@ -22,8 +22,6 @@ const UserList = (props) => {
         fetchUsers();
     }, [])
         
-
-
     return ( <ul className="noListStyle">{
             listLoaded ?
             list.map(user => {

@@ -17,7 +17,8 @@ function App() {
     justifyContent: 'center',
     minWidth: '100%',
     minHeight: '100%',
-    width: '100%'
+    width: '100%',
+    height: '100%'
   }
 
   const navbarStyle = {
@@ -32,7 +33,7 @@ function App() {
   const dispatch = useDispatch();
 
   const logoutHandler = (event) => {
-    axios.post('http://localhost/react-1/server/public/api/logout', {}, {
+    axios.post(process.env.REACT_APP_API_URL+'/api/logout', {}, {
         withCredentials: true
     }).then((response) => {
         dispatch(logout());
@@ -47,11 +48,11 @@ function App() {
   };
 
   return (
-    <div className="App">
-        <div>
-        <Router>
-          <AppBar position="sticky" style={navbarStyle}>
-            <Toolbar>
+    <div className="App" style={{height: '100vh'}}>
+        <div style={{height: '100%'}}>
+        <Router >
+          <AppBar position="sticky" >
+            <Toolbar style={navbarStyle}>
               {
                 !currentUser ? 
                 <Fragment>

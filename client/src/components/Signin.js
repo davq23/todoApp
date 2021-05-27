@@ -41,7 +41,7 @@ const Signin = () => {
 
         setDisableInputs(true);
 
-        axios.post('http://localhost/react-1/server/public/api/users/new', credentials, {
+        axios.post(`${process.env.REACT_APP_API_URL}/api/users/new`, credentials, {
         })
             .then((result) => {
                 setSigninState(prevSigninState => ({...prevSigninState, 'username': '', 'password':''}));

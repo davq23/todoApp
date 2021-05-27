@@ -10,6 +10,7 @@ import axios from "axios";
 import {login, logout} from "../slices/userslice";
 import Dashboard from "../components/Dashboard";
 import '../main.css';
+import { API_URL } from "../constants";
 
 
 function Routes() {
@@ -18,7 +19,7 @@ function Routes() {
     const dispatch = useDispatch();
 
     const fetchAuth = () => {
-        axios.post('http://localhost/react-1/server/public/api/auth', {}, {
+        axios.post(`${process.env.REACT_APP_API_URL}/api/auth`, {}, {
             withCredentials: true,
         }).then((response) => {
             if (!currentUser) {
@@ -43,14 +44,14 @@ function Routes() {
                     <h1 className="fadeoutFast">Loading...</h1>
                 :
                     <Switch>
-                        <Route exact path="/">
-                            {  currentUser ?   <Dashboard /> : <Redirect to="/login" />}
+                        <Route exact path={`${process.env.REACT_APP_ROUTE_PREFIX}/`}>
+                            {  currentUser ?   <Dashboard /> : <Redirect to={`${process.env.REACT_APP_ROUTE_PREFIX}/login`} />}
                         </Route> 
-                            <Route exact path="/login">
-                                {  currentUser ? <Redirect to="/" /> : <Login className="FormBox" />}
+                            <Route exact path={`${process.env.REACT_APP_ROUTE_PREFIX}/login`}>
+                                {  currentUser ? <Redirect to={`${process.env.REACT_APP_ROUTE_PREFIX}/`} /> : <Login className="FormBox" />}
                             </Route>
-                            <Route exact path="/signin">
-                                {  currentUser ? <Redirect to="/" /> : <Signin className="FormBox" />}
+                            <Route exact path={`${process.env.REACT_APP_ROUTE_PREFIX}/signin`}>
+                                {  currentUser ? <Redirect to={`${process.env.REACT_APP_ROUTE_PREFIX}/`} /> : <Signin className="FormBox" />}
                             </Route>
                     </Switch>
             }
