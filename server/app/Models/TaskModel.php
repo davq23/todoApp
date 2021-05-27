@@ -42,7 +42,8 @@ class TaskModel extends Model {
     public function fetchAll(int $limit) {
         $builder = $this->builder();
 
-        return $builder->select(['tsk_id as taskID', 'tsk_name as taskName', 'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt'])
+        return $builder->select(['tsk_id as taskID', 'tsk_name as taskName', 'tsk_description as taskDescription',
+                        'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt'])
                         ->limit($limit)
                         ->get()->getResult();
     }
@@ -50,21 +51,41 @@ class TaskModel extends Model {
     public function fetchAllFromUser(int $userID) {
         $builder = $this->builder();
 
-        return $builder->select(['tsk_id as taskID', 'tsk_name as taskName', 'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt'])
+        return $builder->select(['tsk_id as taskID', 'tsk_name as taskName',  'tsk_description as taskDescription',
+                        'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'tsk_u_done as taskDone'])
+                        ->join('r_task_user', 'tsk_u_user = tsk_user')
                         ->where('tsk_user', $userID)
                         ->get()->getResult();
     }
 
-    public function insertTask(array &$newTask) {
+    public function insertTask(array $newTask) {
         try {
             $this->db->transStart();
 
-            $newTask['taskID'] = $this->insert($newTask);
+            $taskID = $this->insert($newTask);
 
             $insertErrors = $this->errors();
 
-            if ($this->db->transStatus() == false) {
-                throw json_encode($this->db->error());
+            if ($this->db->transStatus() === false) {
+                throw new \Exception(json_encode($this->db->error()));
+            }
+
+            if (count($insertErrors) > 0) {
+                return $insertErrors;
+            }
+
+            $taskUserModel = new TaskUserModel($this->db);
+
+            $taskUserID = $taskUserModel->insert([
+                'tsk_u_user' => $newTask['tsk_user'],
+                'tsk_u_task' => $taskID,
+                'tsk_u_done' => '0',
+            ]);
+
+            $insertErrors =  $taskUserModel->errors();
+
+            if ($this->db->transStatus() === false) {
+                throw new \Exception(json_encode($this->db->error()));
             }
 
             if (count($insertErrors) > 0) {
@@ -73,7 +94,7 @@ class TaskModel extends Model {
 
             $this->db->transComplete();
 
-            return $newTask;
+            return $taskID;
 
         } catch (\Exception $e) {
             log_message('error', $e->getMessage());
