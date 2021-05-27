@@ -21,7 +21,7 @@ class TaskModel extends Model {
     protected $beforeUpdate = ['setUpdatedAt'];
 
     protected $validationRules = [
-        'tsk_name' => 'required|is_unique[e_task.tsk_name,tsk_id,{tsk_id}]min_length[10]|max_length[120]',
+        'tsk_name' => 'required|is_unique[e_task.tsk_name,tsk_id,{tsk_id}]|min_length[10]|max_length[120]',
         'tsk_description' => 'max_length[255]',
         'tsk_user' => 'required',
     ];
