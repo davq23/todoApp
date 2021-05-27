@@ -7,11 +7,6 @@ Options All -Indexes
 
 # Turning on the rewrite engine is necessary for the following rules and features.
 # FollowSymLinks must be enabled for this to work.
-<IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "http://localhost:3000"
-	Header set Access-Control-Allow-Headers "Accept, Content-Type, Referer, User-Agent"
-	Header set Access-Control-Allow-Credentials "true"
-</IfModule>
 
 <IfModule mod_rewrite.c>
 	Options +FollowSymlinks
