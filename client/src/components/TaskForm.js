@@ -1,12 +1,12 @@
-import {Button, Input, Popper, TableCell, TableFooter, TableRow, TextareaAutosize} from '@material-ui/core';
+import {Button, Input, Popper, TableCell, TableFooter, TableRow, TextareaAutosize, Snackbar} from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import {useState, useImperativeHandle, useRef, useEffect} from 'react';
 import '../main.css';
 import axios from "axios";
 import {useSelector, useDispatch} from 'react-redux';
 import Task from "../models/Task";
-import { save, selectTasks } from '../slices/taskslice';
-import { API_URL } from '../constants';
+import MuiAlert from '@material-ui/lab/Alert';
+
 
 const TaskForm = (props) => {
     const popperID = 'editDescriptionPopper';
@@ -15,8 +15,9 @@ const TaskForm = (props) => {
     const [disableForm, setDisableForm] = useState(false);
     const [task, setTask] = useState(new Task());
     const [actionName, setActionName] = useState('ADD');
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState(null);
 
-    const dispatch = useDispatch();
 
     useEffect(() => {
         if (props.selectedTask) {
@@ -49,13 +50,23 @@ const TaskForm = (props) => {
             setTask(new Task());
 
             setActionName('ADD');
-            
-            dispatch(save({
-                ...taskExistent,    
-                ...response.data,
-            }));
-        }).catch((response) => {
+
+            props.addTask(response.data);
+        }).catch((error) => {
             setDisableForm(false);
+
+            if (error.response.status === 400) {
+                if (error.response.data.messages.taskName) {
+                    setMessage(error.response.data.messages.taskName);
+                }
+                else if (error.response.data.messages.taskDescription) {
+                    setMessage(error.response.data.messages.taskDescription);
+                }
+                else {
+                    setMessage(error.response.data.messages.unknown);
+                }
+                setShowMessage(true);
+            }
 
         });
     }
@@ -82,6 +93,14 @@ const TaskForm = (props) => {
         }
     };
 
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setShowMessage(false);
+      };
+
     return (
         <TableFooter>
             <TableRow>
@@ -107,6 +126,11 @@ const TaskForm = (props) => {
                     </TextareaAutosize>
                 </Container>
             </Popper>
+            <Snackbar open={showMessage} >
+                <MuiAlert onClose={handleCloseAlert} severity="error">
+                    {`Error: ${message}`}
+                </MuiAlert>
+            </Snackbar>
         </TableFooter>
     )
 }
