@@ -108,7 +108,7 @@ class TaskModel extends Model {
     protected function setUpdatedAt($data) {
         $currentDateTime = new \DateTime();
 
-        $data['data']['tsk_u_updated_at'] = $currentDateTime->format('Y-m-d H:i:s');
+        $data['data']['tsk_updated_at'] = $currentDateTime->format('Y-m-d H:i:s');
 
         return $data;
     }
