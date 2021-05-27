@@ -42,9 +42,12 @@ $routes->post('api/users/new', 'UserController::post', ['filter' => 'sessionauth
 $routes->post('api/auth/', 'IsAuth::auth', ['filter' => 'sessionauth']);
 
 $routes->group('api/tasks', ['filter' => 'sessionauth'], function($taskRoutes) {
+	$taskRoutes->delete('delete/(:num)', 'Task::deleteTask/$1');
 	$taskRoutes->get('get/(:num)', 'Task::fetchAllTask/$1');
 	$taskRoutes->get('get/user/(:num)', 'Task::fetchAllTaskFromUser/$1');
 	$taskRoutes->post('new', 'Task::insertTask');
+	$taskRoutes->post('update', 'Task::updateTask');
+	$taskRoutes->put('set/done/(:num)', 'Task::setTaskDone/$1');
 });
 
 
