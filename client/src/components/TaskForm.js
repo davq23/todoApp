@@ -7,8 +7,6 @@ import {useSelector, useDispatch} from 'react-redux';
 import Task from "../models/Task";
 import MuiAlert from '@material-ui/lab/Alert';
 
->>>>>>> 3917cd6 (Add message for taskform and message for task name)
-
 const TaskForm = (props) => {
     const popperID = 'editDescriptionPopper';
     const [anchorEl, setAnchorEl] = useState(null);
