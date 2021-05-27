@@ -20,7 +20,6 @@ class Filters extends BaseConfig
 		'csrf'     		=> CSRF::class,
 		'toolbar'  		=> DebugToolbar::class,
 		'honeypot' 		=> Honeypot::class,
-		'cors' 			=> \Fluent\Cors\Filters\CorsFilter::class,
 		'sessionauth' 	=> \App\Filters\SessionAuthFilter::class,
 	];
 
@@ -38,7 +37,7 @@ class Filters extends BaseConfig
 		'after'  => [
 			// 'toolbar',
 			// 'honeypot',
-			'cors'
+			//'cors'
 		],
 	];
 
@@ -63,6 +62,5 @@ class Filters extends BaseConfig
 	 * @var array
 	 */
 	public $filters = [
-		'cors' => ['after' => ['api/*']],
 	];
 }
