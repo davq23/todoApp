@@ -60,7 +60,6 @@ class TaskModel extends Model {
                         'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'tsk_u_done as taskDone'])
                         ->join('r_task_user', 'tsk_u_user = tsk_user')
                         ->where('tsk_u_user', $userID)
-                        ->groupBy('tsk_id')
                         ->orderBy('tsk_id')
                         ->get()->getResult();
     }
