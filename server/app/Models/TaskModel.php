@@ -58,8 +58,8 @@ class TaskModel extends Model {
 
         return $builder->select(['tsk_id as taskID', 'tsk_name as taskName',  'tsk_description as taskDescription',
                         'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'tsk_u_done as taskDone'])
-                        ->join('r_task_user', 'tsk_u_task = tsk_id')
-                        ->where('tsk_user', $userID)
+                        ->join('r_task_user', 'tsk_u_user = tsk_user')
+                        ->where('tsk_u_user', $userID)
                         ->groupBy('tsk_id')
                         ->orderBy('tsk_id')
                         ->get()->getResult();
