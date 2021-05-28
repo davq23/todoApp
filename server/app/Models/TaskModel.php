@@ -57,12 +57,12 @@ class TaskModel extends Model {
         $builder = $this->builder();
 
         return $builder->select(['tsk_id as taskID', 'tsk_name as taskName',  'tsk_description as taskDescription',
-                        'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'tsk_u_done as taskDone'])
-                        ->join('r_task_user', 'tsk_u_user = tsk_user')
-                        ->where('tsk_user', $userID)
-                        ->groupBy('tsk_id')
-                        ->orderBy('tsk_id')
-                        ->get()->getResult();
+                    'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'tsk_u_done as taskDone'])
+                    ->join('r_task_user', 'tsk_id = tsk_u_task')
+                    ->where('tsk_user', $userID)
+                    ->where('tsk_u_user', $userID)
+                    ->orderBy('tsk_id')
+                    ->get()->getResult();
     }
 
     public function insertTask(array $newTask) {
