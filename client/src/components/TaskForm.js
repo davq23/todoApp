@@ -1,10 +1,11 @@
-import {Button, Input, Popper, TableCell, TableFooter, TableRow, TextareaAutosize, Snackbar} from '@material-ui/core';
+import {Button, Input, Popper, TableCell, TableBody, TableRow, TextareaAutosize, Snackbar} from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import {useState, useImperativeHandle, useRef, useEffect} from 'react';
 import '../main.css';
 import axios from "axios";
 import {useSelector, useDispatch} from 'react-redux';
 import Task from "../models/Task";
+import {selectUser} from '../slices/userslice';
 import MuiAlert from '@material-ui/lab/Alert';
 
 
@@ -18,6 +19,7 @@ const TaskForm = (props) => {
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState(null);
 
+    const currentUser = useSelector(selectUser); 
 
     useEffect(() => {
         if (props.selectedTask) {
@@ -50,6 +52,10 @@ const TaskForm = (props) => {
             setTask(new Task());
 
             setActionName('ADD');
+
+            if (task.taskID === '') {
+                response.data['taskCreatorID'] = currentUser;
+            }
 
             props.addTask(response.data);
         }).catch((error) => {
@@ -102,7 +108,7 @@ const TaskForm = (props) => {
       };
 
     return (
-        <TableFooter>
+        <TableBody>
             <TableRow>
                     <TableCell>
                         <Input readOnly={true} name="taskID" value={task.taskID}/>
@@ -119,19 +125,24 @@ const TaskForm = (props) => {
                         <Button  variant="contained" onClick={clearTask} style={{backgroundColor: 'gray', color: 'white'}} disabled={disableForm}>CLEAR</Button>
                     </TableCell>
             </TableRow>
-            <Popper id={popperID} open={open} onClose={handleClose} disabled={disableForm} anchorEl={anchorEl} >
-                <Container>
-                    <TextareaAutosize placeholder='Describe your task' name="taskDescription" 
-                        onInput={handleTask} value={task.taskDescription} onBlur={handleClose} >
-                    </TextareaAutosize>
-                </Container>
-            </Popper>
-            <Snackbar open={showMessage} >
-                <MuiAlert onClose={handleCloseAlert} severity="error">
-                    {`Error: ${message}`}
-                </MuiAlert>
-            </Snackbar>
-        </TableFooter>
+            <tr>
+                <td>
+                    <Popper id={popperID} open={open} onClose={handleClose} disabled={disableForm} anchorEl={anchorEl} >
+                        <Container>
+                            <TextareaAutosize placeholder='Describe your task' name="taskDescription" 
+                                onInput={handleTask} value={task.taskDescription} onBlur={handleClose} >
+                            </TextareaAutosize>
+                        </Container>
+                    </Popper>
+                    <Snackbar open={showMessage} >
+                        <MuiAlert onClose={handleCloseAlert} severity="error">
+                            {`Error: ${message}`}
+                        </MuiAlert>
+                    </Snackbar>
+                </td>
+            </tr>
+           
+        </TableBody>
     )
 }
 

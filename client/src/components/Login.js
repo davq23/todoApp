@@ -57,7 +57,7 @@ const Login = () => {
             .catch((error) => {
                 setDisableInputs(false);
 
-                if (error.response && error.response.status == 401) {
+                if (error.response && error.response.status == 400) {
                     setLoginState(prevLoginState => ({
                         ...prevLoginState, 
                         'errorLogin': true,

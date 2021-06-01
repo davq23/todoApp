@@ -10,21 +10,27 @@ class Task extends BaseController
 {
 	use ResponseTrait;
 
-    public function fetchAllTask(int $limit) {
-        $taskModel = new TaskModel();
+    private static $taskRules = [
+        'taskName'        => 'required|min_length[10]|max_length[120]',
+        'taskDescription' => 'permit_empty|max_length[255]',
+        'userID'        => 'required|integer',
+    ];
 
-        $result = $taskModel->fetchAll($limit);
+    private static $taskMessages = [
+        'taskName' =>  [
+            'required'              => 'Task name required',
+            'min_length'            => 'Task name must be at least 10 chars long',
+            'max_length'            => 'Task name must be up to 120 chars long',
+        ],
+        'taskDescription' =>  [
+            'max_length'            => 'Task description must be up to 255 chars long',
+        ],
 
-        return $this->respond($result);
-    }
-
-    public function fetchAllTaskFromUser(int $userID) {
-        $taskModel = new TaskModel();
-
-        $result = $taskModel->fetchAllFromUser($userID);
-
-        return $this->respond($result);
-    }
+        'userID' => [
+            'required'              => 'Missing user',
+            'integer'               => 'Invalid type for user ID',
+        ]
+    ];
 
     public function deleteTask(int $taskID) {
         $taskModel = new TaskModel();
@@ -42,11 +48,78 @@ class Task extends BaseController
             return $this->failUnauthorized();
         }
 
-        return $this->respondDeleted($result);
+        return $this->respondDeleted(['taskID' => $taskID]);
+    }
+
+    public function fetchAllRecentTask(int $limit) {
+        $taskModel = new TaskModel();
+
+        $result = $taskModel->fetchAllRecent($limit);
+
+        return $this->respond($result);
+    }
+
+    public function fetchAllTaskFromUser(int $userID) {
+        $taskModel = new TaskModel();
+
+        $result = $taskModel->fetchAllFromUser($userID);
+
+        return $this->respond($result);
+    }
+
+    public function join(int $taskID) {
+        $taskUserModel = new TaskUserModel();
+
+        $userID = session('u_id');
+
+        $result = $taskUserModel->joinTask($userID, $taskID);
+
+        if (is_array($result)) {
+            return $this->failValidationErrors([
+                'taskID' => isset($result['tsk_u_task']) ? $result['tsk_u_task'] : null,
+                'userID' => isset($result['tsk_u_user']) ? $result['tsk_u_user'] : null,
+                'taskDone' => isset($result['tsk_u_done']) ? $result['tsk_u_done'] : null,
+            ]);
+        }
+
+        if (is_bool($result)) {
+            return $this->failValidationErrors([
+                'unknown' => 'Unknown error'
+            ]);
+        }
+
+        return $this->respond([
+            'message' => 'Joined task successfully'
+        ]);
+    }
+    public function leave(int $taskID) {
+        $taskUserModel = new TaskUserModel();
+
+        $userID = session('u_id');
+
+        $result = $taskUserModel->leaveTask($userID, $taskID);
+
+        if (is_array($result)) {
+            return $this->failValidationErrors([
+                'taskID' => isset($result['tsk_u_task']) ? $result['tsk_u_task'] : null,
+                'userID' => isset($result['tsk_u_user']) ? $result['tsk_u_user'] : null,
+                'taskDone' => isset($result['tsk_u_done']) ? $result['tsk_u_done'] : null,
+            ]);
+        }
+
+        if (is_bool($result)) {
+            return $this->failValidationErrors([
+                'unknown' => 'Unknown error'
+            ]);
+        }
+
+        return $this->respond([
+            'message' => 'Joined task successfully'
+        ]);
     }
 
     public function updateTask() {
-        $newTask = $this->request->getJSON();
+        $newTask = $this->request->getJSON(true);
 
         if (!isset($newTask)) {
             return $this->failValidationErrors([
@@ -54,7 +127,22 @@ class Task extends BaseController
             ]);
         }
 
-        $newTask->userID = session('u_id');
+        $newTask['userID'] = session('u_id');
+
+        $validation = \Config\Services::validation();
+
+        $taskRulesUpdate = Task::$taskRules;
+        $taskRulesUpdate['taskID'] = 'required|integer';
+        $taskMessagesUpdate = Task::$taskRules;
+        $taskMessagesUpdate['taskID'] = [ 'required' => 'No task found', 'integer' => 'Invalid task'];
+
+        $validation->setRules($taskRulesUpdate, $taskMessagesUpdate);
+
+        if (!$validation->run($newTask)) {
+            $errors = $validation->getErrors();
+
+            return $this->failValidationErrors($errors);
+        }
 
         $taskModel = new TaskModel();
 
@@ -62,10 +150,10 @@ class Task extends BaseController
 
         $taskModel
             ->where('tsk_user', $userID)
-            ->update((isset($newTask->taskID) ? $newTask->taskID : null), [
-                'tsk_id' => (isset($newTask->taskID) ? $newTask->taskID : null),
-                'tsk_name' => (isset($newTask->taskName) ? $newTask->taskName : null),
-                'tsk_description' => (isset($newTask->taskDescription) ? $newTask->taskDescription : null),
+            ->update($newTask['taskID'], [
+                'tsk_id'            => $newTask['taskID'],
+                'tsk_name'          => $newTask['taskName'],
+                'tsk_description'   => $newTask['taskDescription'],
             ]);
 
         $errors = $taskModel->errors();
@@ -124,7 +212,7 @@ class Task extends BaseController
     }
 
     public function insertTask() {
-        $newTask = $this->request->getJSON();
+        $newTask = $this->request->getJSON(true);
 
         if (!isset($newTask) ) {
             return $this->failValidationErrors([
@@ -132,14 +220,24 @@ class Task extends BaseController
             ]);
         }
 
-        $newTask->userID = session('u_id');
+        $newTask['userID'] = session('u_id');
+
+        $validation = \Config\Services::validation();
+
+        $validation->setRules(Task::$taskRules, Task::$taskMessages);
+
+        if (!$validation->run($newTask)) {
+            $errors = $validation->getErrors();
+
+            return $this->failValidationErrors($errors);
+        }
 
         $taskModel = new TaskModel();
 
         $newTaskArray = [
-            'tsk_name'          => $newTask->taskName,
-            'tsk_description'   => $newTask->taskDescription,
-            'tsk_user'          => $newTask->userID
+            'tsk_name'          => $newTask['taskName'],
+            'tsk_description'   => $newTask['taskDescription'],
+            'tsk_user'          => $newTask['userID'],
         ];
 
         $result = $taskModel->insertTask($newTaskArray);
@@ -157,7 +255,7 @@ class Task extends BaseController
             ]);
         }
 
-        $newTask->taskID = $result;
+        $newTask['taskID'] = $result;
         
         return $this->respondCreated($newTask);
     } 

@@ -1,7 +1,6 @@
 import { Route, Switch, Redirect } from "react-router-dom";
 import {useSelector, useDispatch} from 'react-redux';
 import {selectUser} from '../slices/userslice';
-import { useCookies } from 'react-cookie';
 import Login from "../components/Login";
 import Signin from "../components/Signin";
 import { Fragment, useState, useEffect } from "react";

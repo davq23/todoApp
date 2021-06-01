@@ -32,6 +32,61 @@ class TaskUserModel extends Model {
 
     protected $beforeUpdate = ['setUpdatedAt'];
 
+    public function joinTask(int $userID, int $taskID) {
+        try {
+            $userTaskID = $this->insert([
+                'tsk_u_user' => $userID,
+                'tsk_u_task' => $taskID,
+                'tsk_u_done' => '0',
+            ]);
+    
+            $errors = $this->errors();
+    
+            if (count($errors)) {
+                return $errors;
+            }
+
+            return $userTaskID;
+
+        } catch(\Exception $e) {
+            log_message('error', $e->getMessage());
+        }
+
+        return false;
+    }
+    public function leaveTask(int $userID, int $taskID) {
+        try {
+            $taskModel = new TaskModel($this->db); 
+
+            $task = $taskModel->find($taskID);
+
+            log_message('error', json_encode($task));
+
+
+            if (!isset($task) || $task['tsk_user'] === $userID) {
+                return false;
+            }
+
+            $this
+                            ->where('tsk_u_user', $userID)   
+                            ->where('tsk_u_task', $taskID)
+                            ->delete();
+    
+            $errors = $this->errors();
+    
+            if (count($errors)) {
+                return $errors;
+            }
+
+            return $taskID;
+
+        } catch(\Exception $e) {
+            log_message('error', $e->getMessage());
+        }
+
+        return false;
+    }
+
     protected function setUpdatedAt($data) {
         $currentDateTime = new \DateTime();
 
@@ -39,4 +94,6 @@ class TaskUserModel extends Model {
 
         return $data;
     }
+
+    
 }
