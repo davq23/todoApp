@@ -4,7 +4,6 @@ import TaskForm from './TaskForm';
 import {Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@material-ui/core';
 import axios from "axios";
 import '../main.css';
-import { addAll, deleteOne, selectTasks, setDone } from '../slices/taskslice';
 import {useSelector, useDispatch} from 'react-redux';
 import { Checkbox, FormControlLabel } from '@material-ui/core';
 import { selectUser } from '../slices/userslice';
@@ -48,7 +47,7 @@ const TaskList = (props) => {
         setTasks(taskObject);
     }
 
-    const updateTaskDone = (taskID) => {
+    const updateTaskDone = (task) => {
         const taskObject = {
             ...tasks,
         }
@@ -93,6 +92,8 @@ const TaskList = (props) => {
         const taskID = event.currentTarget.value;
         
         if (checked) {
+            setDisableRows(true);
+            
             axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/set/done/${taskID}`, {}, {
                 withCredentials: true
             }).then((response) => {
@@ -108,6 +109,25 @@ const TaskList = (props) => {
         }
     };
 
+    const leaveTask = (taskID) => {
+        setDisableRows(true);
+        
+        axios.post(`${process.env.REACT_APP_API_URL}/api/tasks/leave/${taskID}`, {}, {
+            withCredentials: true
+        }).then((response) => {
+            setDisableRows(false);
+            props.setLeftTask({
+                ...tasks[taskID]
+            });
+            
+            deleteTaskState(taskID);
+        }).catch((response) => {
+            setDisableRows(false);
+            if (response.status == 401) {
+            }
+        });
+    }
+
     const refreshTasks = (taskList) => {
         if (taskList.length == 0) {
             return <TableRow key={0}>
@@ -121,12 +141,22 @@ const TaskList = (props) => {
                 <TableCell>{task.taskName}</TableCell>
                 <TableCell>{task.taskDescription}</TableCell>
                 <TableCell style={{display: 'flex', justifyContent: 'space-evenly'}}>
-                    <Button disabled={disableRows} variant="contained" color="primary"  onClick={() => {
-                        setEditTask(task);
-                    }}>EDIT</Button>
-                    <Button disabled={disableRows} variant="contained" color="secondary" onClick={() => {
-                        deleteTask(task.taskID);
-                    }}>DELETE</Button>
+                    {
+                        currentUser === task.taskCreatorID ? 
+                        <Fragment>
+                            <Button disabled={disableRows} variant="contained" color="primary"  onClick={() => {
+                                setEditTask(task);
+                            }}>EDIT</Button>
+                            <Button disabled={disableRows} variant="contained" color="secondary" onClick={() => {
+                                deleteTask(task.taskID);
+                            }}>DELETE</Button>
+                        </Fragment>
+                        :
+                        <Button disabled={disableRows} variant="contained" color="secondary" onClick={() => {
+                            leaveTask(task.taskID);
+                        }}>LEAVE</Button>
+                    }
+                   
                     <FormControlLabel
                         control={
                         <Checkbox 
@@ -149,6 +179,15 @@ const TaskList = (props) => {
         fetchTasks();
     }, []);
 
+    useEffect(() => {
+        if (props.joinTask) {
+            
+            addTask(props.joinTask);
+    
+            props.setJoinTask(null);
+        }
+    }, [props.joinTask])
+
     return (
         <TableContainer style={{ maxHeight: '30rem', justifyContent: 'center' }}>
             <Table stickyHeader>
@@ -160,6 +199,8 @@ const TaskList = (props) => {
                         <TableCell style={{textAlign: 'center'}}>Action</TableCell>
                     </TableRow>
                 </TableHead>
+                <TaskForm selectedTask={editTask} setSelectedTask={setEditTask} 
+                    editTask={updateTaskState} addTask={addTask} />
                 <TableBody >
                     {
                         (tasks instanceof Object) ?
@@ -170,8 +211,7 @@ const TaskList = (props) => {
                         </TableRow>
                     }
                 </TableBody>
-                <TaskForm selectedTask={editTask} setSelectedTask={setEditTask} 
-                    editTask={updateTaskState} addTask={addTask} />
+              
             </Table>
            
         </TableContainer>

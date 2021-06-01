@@ -42,14 +42,16 @@ class TaskModel extends Model {
         ]
     ];
 
-    public function fetchAll(int $limit) {
+    public function fetchAllRecent(int $limit) {
         $builder = $this->builder();
 
         return $builder->select(['tsk_id as taskID', 'tsk_name as taskName', 'tsk_description as taskDescription',
-                        'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt'])
-                        ->limit($limit)
+                        'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'u_name as taskCreatorName', 
+                        'tsk_user as taskCreatorID'])
+                        ->join('e_user', 'tsk_user = u_id')
                         ->groupBy('tsk_id')
                         ->orderBy('tsk_id')
+                        ->limit($limit)
                         ->get()->getResult();
     }
 
@@ -57,12 +59,11 @@ class TaskModel extends Model {
         $builder = $this->builder();
 
         return $builder->select(['tsk_id as taskID', 'tsk_name as taskName',  'tsk_description as taskDescription',
-                        'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'tsk_u_done as taskDone'])
-                        ->join('r_task_user', 'tsk_id = tsk_u_task')
-                        ->where('tsk_user', $userID)
-                        ->where('tsk_u_user', $userID)
-                        ->orderBy('tsk_id')
-                        ->get()->getResult();
+                    'tsk_created_at as createdAt', 'tsk_updated_at as updatedAt', 'tsk_u_done as taskDone', 'tsk_user as taskCreatorID'])
+                    ->join('r_task_user', 'tsk_id = tsk_u_task')
+                    ->where('tsk_u_user', $userID)
+                    ->orderBy('tsk_id')
+                    ->get()->getResult();
     }
 
     public function insertTask(array $newTask) {
