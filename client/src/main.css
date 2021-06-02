@@ -43,9 +43,12 @@
     height: 100%;
     grid-template-columns: 20% auto;
     grid-template-rows: 30% auto;
+    overflow-y: scroll;
     column-gap: 1vw;
     row-gap: 1vh;
     text-align: center;
+    margin-left: 0%;
+    margin-right: 0%;
 }
 
 .textAlignCenter {
