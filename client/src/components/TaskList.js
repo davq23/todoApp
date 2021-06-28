@@ -20,13 +20,14 @@ const TaskList = (props) => {
             taskObject[task.taskID] = task;
         });
 
+
         setTasks(taskObject);
-        props.setSelectedTask(taskObject);
+        props.setSelectedTasks(taskObject);
     }
 
     const addTask = (task) => {
         setTasks({...tasks, [task.taskID]: task});
-        props.setSelectedTask(tasks);
+        props.setSelectedTasks({...tasks, [task.taskID]: task});
     }
 
     const deleteTaskState = (taskID) => {
@@ -37,7 +38,7 @@ const TaskList = (props) => {
         delete taskObject[taskID];
 
         setTasks(taskObject);
-        props.setSelectedTask(taskObject);
+        props.setSelectedTasks(taskObject);
     }
 
     const updateTaskState = (done) => {
@@ -48,7 +49,7 @@ const TaskList = (props) => {
         taskObject[task.taskID] = task;
 
         setTasks(taskObject);
-        props.setSelectedTask(taskObject);
+        props.setSelectedTasks(taskObject);
     }
 
     const updateTaskDone = (task) => {
