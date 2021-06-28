@@ -75,9 +75,12 @@ const LatestTaskList = (props) => {
 
     useEffect(() => {
         if (props.leftTask) {
-            
-            props.setLeftTask(null);
+            setTasks({
+                ...tasks,
+                [props.leftTask.taskID]: props.leftTask
+            });
 
+            props.setLeftTask(null);
         }
     }, [props.leftTask]);
 
@@ -106,8 +109,6 @@ const LatestTaskList = (props) => {
             </TableRow>
         });
     }
-
-
     
     return (
         <TableContainer style={{ maxHeight: '30rem', justifyContent: 'center' }}>

@@ -116,6 +116,7 @@ const TaskList = (props) => {
             withCredentials: true
         }).then((response) => {
             setDisableRows(false);
+
             props.setLeftTask({
                 ...tasks[taskID]
             });
