@@ -58,7 +58,10 @@ class UserController extends BaseController {
         $errors = $userModel->errors();
 
         if ($errors) {
-            return $this->failValidationErrors(['username' => $errors['u_name'], 'password' => $errors['u_password']]);
+            return $this->failValidationErrors([
+                'username' => isset($errors['u_name']) ? $errors['u_name'] : null, 
+                'password' => isset($errors['u_password']) ? $errors['u_password'] : null
+            ]);
         }
 
         return $this->respondCreated([
