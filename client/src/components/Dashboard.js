@@ -8,6 +8,7 @@ import LatestTaskList from './LatestTaskList';
 const Dashboard = () => {
     const [joinTask, setJoinTask] = useState(null);
     const [leftTask, setLeftTask] = useState(null);
+    const [selectedTasks, setSelectedTasks] = useState(null)
 
     return (
         <Fragment >
@@ -15,9 +16,11 @@ const Dashboard = () => {
                 <UserList limit="100"/>
                 <div>
                     <Title />
-                    <TaskList limit="100" joinTask={joinTask} setJoinTask={setJoinTask} setLeftTask={setLeftTask}/>
+                    <TaskList limit="100" joinTask={joinTask} setJoinTask={setJoinTask} 
+                        setSelectedTasks={setSelectedTasks} setLeftTask={setLeftTask}/>
                     <h1>Latest TODOs</h1>
-                    <LatestTaskList limit="100" setJoinTask={setJoinTask} leftTask={leftTask} setLeftTask={setLeftTask} />
+                    <LatestTaskList limit="100" setJoinTask={setJoinTask} selectedTasks={selectedTasks}
+                        leftTask={leftTask} setLeftTask={setLeftTask} />
                 </div>
             </div>
         </Fragment>
