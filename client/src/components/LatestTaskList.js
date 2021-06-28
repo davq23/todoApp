@@ -84,21 +84,29 @@ const LatestTaskList = (props) => {
         }
     }, [props.leftTask]);
 
+    useEffect(() => {
+        console.log(props.selectedTasks);
+    }, [props.selectedTasks])
+
 
     const refreshTasks = (taskList) => {
         if (props.selectedTasks === null) {
             return <TableRow key={0}>
-                <TableCell style={{textAlign: 'center'}} colSpan="4">Loading Tasks</TableCell>
+                <TableCell style={{textAlign: 'center'}} colSpan="5">Loading Tasks</TableCell>
             </TableRow>
         }
 
         if (taskList.length === 0) {
             return <TableRow key={0}>
-                <TableCell style={{textAlign: 'center'}} colSpan="4">Add tasks to your TODO list</TableCell>
+                <TableCell style={{textAlign: 'center'}} colSpan="5">Add tasks to your TODO list</TableCell>
             </TableRow>
         }
 
         return taskList.map(task => {
+            if (task.taskID in props.selectedTasks) {
+                return;
+            }
+
             return <TableRow key={task.taskID}>
                 <TableCell>{task.taskID}</TableCell>
                 <TableCell>{task.taskName}</TableCell>
@@ -106,7 +114,7 @@ const LatestTaskList = (props) => {
                 <TableCell>{task.taskCreatorName}</TableCell>
                 <TableCell style={{display: 'flex', justifyContent: 'space-evenly'}}>
                     {
-                        task.taskCreatorID !== currentUser || props.selectedTasks === null? 
+                        task.taskCreatorID !== currentUser ? 
                         <Button disabled={disableRows} variant="contained" color="primary"  onClick={() => {
                             joinTask(task.taskID);
                         }}>JOIN</Button> :  '---'
