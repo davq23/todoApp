@@ -86,7 +86,13 @@ const LatestTaskList = (props) => {
 
 
     const refreshTasks = (taskList) => {
-        if (taskList.length == 0) {
+        if (props.selectedTasks === null) {
+            return <TableRow key={0}>
+                <TableCell style={{textAlign: 'center'}} colSpan="4">Loading Tasks</TableCell>
+            </TableRow>
+        }
+
+        if (taskList.length === 0) {
             return <TableRow key={0}>
                 <TableCell style={{textAlign: 'center'}} colSpan="4">Add tasks to your TODO list</TableCell>
             </TableRow>
@@ -100,7 +106,7 @@ const LatestTaskList = (props) => {
                 <TableCell>{task.taskCreatorName}</TableCell>
                 <TableCell style={{display: 'flex', justifyContent: 'space-evenly'}}>
                     {
-                        task.taskCreatorID !== currentUser ? 
+                        task.taskCreatorID !== currentUser || props.selectedTasks === null? 
                         <Button disabled={disableRows} variant="contained" color="primary"  onClick={() => {
                             joinTask(task.taskID);
                         }}>JOIN</Button> :  '---'
@@ -124,11 +130,11 @@ const LatestTaskList = (props) => {
                 </TableHead>
                 <TableBody >
                     {
-                        (tasks instanceof Object) ?
+                        (tasks instanceof Object && props.selectedTasks) ?
                         refreshTasks(Object.values(tasks))
                         :
                         <TableRow className="fadeoutFast">
-                            <TableCell colSpan="4"></TableCell>
+                            <TableCell colSpan="4">Loading tasks</TableCell>
                         </TableRow>
                     }
                 </TableBody>
