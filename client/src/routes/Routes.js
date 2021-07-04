@@ -8,12 +8,8 @@ import axios from "axios";
 
 import { login, logout } from "../slices/userslice";
 import Dashboard from "../components/Dashboard";
-<<<<<<< HEAD
-import '../main.css';
-=======
 import "../main.css";
 import Statistics from "../components/Statistics";
->>>>>>> 3c2e917 (Added chart js)
 
 function Routes() {
   const currentUser = useSelector(selectUser);
