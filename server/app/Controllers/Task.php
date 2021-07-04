@@ -173,6 +173,44 @@ class Task extends BaseController
         return $this->respondUpdated($newTask);
     }
 
+    public function setTaskUndone(int $taskID) {
+        if ($taskID <= 0) {
+            return $this->failValidationErrors([
+                'unknown' => 'Invalid task ID'
+            ]);
+        }
+
+        $userID = session('u_id');
+
+        $taskUserModel = new TaskUserModel();
+
+        $taskUserModel->where('tsk_u_user', $userID)
+                      ->where('tsk_u_task', $taskID)
+                      ->where('tsk_u_done', '1')
+                      ->set([
+                          'tsk_u_done' => '0',
+                      ])
+                      ->update();
+
+        $errors = $taskUserModel->errors();
+
+        if (isset($errors) && is_array($errors) && count($errors) > 0) {
+            return $this->failValidationErrors($errors);
+        }
+
+        $affectedRows = $taskUserModel->db->affectedRows();
+
+        if ($affectedRows === 0) {
+            return $this->failValidationErrors([
+                'unknown' => 'User not registered to this task'
+            ]);
+        }
+
+        return $this->respondUpdated([
+            'taskID' => $taskID
+        ]);
+    }
+
     public function setTaskDone(int $taskID) {
         if ($taskID <= 0) {
             return $this->failValidationErrors([
