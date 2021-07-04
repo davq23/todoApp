@@ -45,6 +45,7 @@ $routes->group('api/tasks', ['filter' => 'sessionauth'], function($taskRoutes) {
 	$taskRoutes->delete('delete/(:num)', 'Task::deleteTask/$1');
 	$taskRoutes->get('get/recent/(:num)', 'Task::fetchAllRecentTask/$1');
 	$taskRoutes->get('get/user/(:num)', 'Task::fetchAllTaskFromUser/$1');
+	$taskRoutes->get('get/user/count', 'Task::fetchTasksUserCount');
 	$taskRoutes->post('new', 'Task::insertTask');
 	$taskRoutes->post('update', 'Task::updateTask');
 	$taskRoutes->post('join/(:num)', 'Task::join/$1');
