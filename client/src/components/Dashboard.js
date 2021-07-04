@@ -13,11 +13,11 @@ const Dashboard = () => {
     return (
         <Fragment >
             <div className='DashboardGrid'>
-                <UserList limit="100"/>
                 <div>
                     <Title />
                     <TaskList limit="100" joinTask={joinTask} setJoinTask={setJoinTask} 
-                        setSelectedTasks={setSelectedTasks} setLeftTask={setLeftTask}/>
+                        setSelectedTasks={setSelectedTasks} setLeftTask={setLeftTask}
+                        selectedTasks={selectedTasks}/>
                     <h1>Latest TODOs</h1>
                     <LatestTaskList limit="100" setJoinTask={setJoinTask} selectedTasks={selectedTasks}
                         leftTask={leftTask} setLeftTask={setLeftTask} />

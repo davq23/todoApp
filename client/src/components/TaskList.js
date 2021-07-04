@@ -11,7 +11,6 @@ import { selectUser } from '../slices/userslice';
 const TaskList = (props) => {
     const [editTask, setEditTask] = useState(null);
     const [disableRows, setDisableRows] = useState(false);
-    const [tasks, setTasks] = useState({});
 
     const transformTaskArrayToObject = (taskArray) => {
         const taskObject = {};
@@ -21,45 +20,41 @@ const TaskList = (props) => {
         });
 
 
-        setTasks(taskObject);
         props.setSelectedTasks(taskObject);
     }
 
     const addTask = (task) => {
-        setTasks({...tasks, [task.taskID]: task});
-        props.setSelectedTasks({...tasks, [task.taskID]: task});
+        props.setSelectedTasks({...props.selectedTasks, [task.taskID]: task});
     }
 
     const deleteTaskState = (taskID) => {
         const taskObject = {
-            ...tasks,
+            ...props.selectedTasks,
         };
 
         delete taskObject[taskID];
 
-        setTasks(taskObject);
         props.setSelectedTasks(taskObject);
     }
 
     const updateTaskState = (done) => {
         const taskObject = {
-            ...tasks,
+            ...props.selectedTasks,
         }
 
         taskObject[task.taskID] = task;
 
-        setTasks(taskObject);
         props.setSelectedTasks(taskObject);
     }
 
-    const updateTaskDone = (task) => {
+    const updateTaskDone = (task, done) => {
         const taskObject = {
-            ...tasks,
+            ...props.selectedTasks,
         }
 
-        taskObject[task.taskID].taskDone = '1';
+        taskObject[task.taskID].taskDone = done;
 
-        setTasks(taskObject);
+        props.setSelectedTasks(taskObject);
     }
 
     const currentUser = useSelector(selectUser);
@@ -95,23 +90,29 @@ const TaskList = (props) => {
     const toggleTask = (event) => {
         const checked = event.currentTarget.checked;
         const taskID = event.currentTarget.value;
+
+        let uri = '';
         
         if (checked) {
-            setDisableRows(true);
-            
-            axios.put(`${process.env.REACT_APP_API_URL}/api/tasks/set/done/${taskID}`, {}, {
-                withCredentials: true
-            }).then((response) => {
-                setDisableRows(false);
-
-                updateTaskDone(response.data)
-            }).catch((response) => {
-                setDisableRows(false);
-    
-                if (response.status == 401) {
-                }
-            });
+            uri = `${process.env.REACT_APP_API_URL}/api/tasks/set/done/${taskID}`;
+        } else {
+            uri = `${process.env.REACT_APP_API_URL}/api/tasks/set/undone/${taskID}`;
         }
+
+        setDisableRows(true);
+
+        axios.put(uri, {}, {
+            withCredentials: true
+        }).then((response) => {
+            setDisableRows(false);
+
+            updateTaskDone(response.data, checked ? '1' : '0');
+        }).catch((response) => {
+            setDisableRows(false);
+
+            if (response.status == 401) {
+            }
+        });
     };
 
     const leaveTask = (taskID) => {
@@ -123,7 +124,7 @@ const TaskList = (props) => {
             setDisableRows(false);
 
             props.setLeftTask({
-                ...tasks[taskID]
+                ...props.selectedTasks[taskID]
             });
             
             deleteTaskState(taskID);
@@ -209,8 +210,8 @@ const TaskList = (props) => {
                     editTask={updateTaskState} addTask={addTask} />
                 <TableBody >
                     {
-                        (tasks instanceof Object) ?
-                        refreshTasks(Object.values(tasks))
+                        (props.selectedTasks instanceof Object) ?
+                        refreshTasks(Object.values(props.selectedTasks))
                         :
                         <TableRow className="fadeoutFast">
                             <TableCell colSpan="4"></TableCell>
