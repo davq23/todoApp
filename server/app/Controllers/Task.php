@@ -67,6 +67,16 @@ class Task extends BaseController
         return $this->respond($result);
     }
 
+    public function fetchTasksUserCount() {
+        $taskModel = new TaskModel();
+
+        $userID = session('u_id');
+
+        $result = $taskModel->fetchTasksUserCount($userID);
+
+        return $this->respond($result);
+    }
+
     public function join(int $taskID) {
         $taskUserModel = new TaskUserModel();
 

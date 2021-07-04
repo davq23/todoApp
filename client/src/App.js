@@ -68,6 +68,9 @@ function App() {
                   <Typography style={navbarItems} variant="h6">
                     <Link to={`${process.env.REACT_APP_ROUTE_PREFIX}/`}>Home</Link>
                   </Typography>
+                  <Typography style={navbarItems} variant="h6">
+                    <Link to={`${process.env.REACT_APP_ROUTE_PREFIX}/statistics`}>Statistics</Link>
+                  </Typography>
                   <Button style={navbarItems} onClick={logoutHandler} variant="contained" type="submit" color="secondary">Logout</Button>
                 </Fragment>
               }
