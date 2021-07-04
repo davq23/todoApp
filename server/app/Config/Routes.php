@@ -50,6 +50,7 @@ $routes->group('api/tasks', ['filter' => 'sessionauth'], function($taskRoutes) {
 	$taskRoutes->post('join/(:num)', 'Task::join/$1');
 	$taskRoutes->post('leave/(:num)', 'Task::leave/$1');
 	$taskRoutes->put('set/done/(:num)', 'Task::setTaskDone/$1');
+	$taskRoutes->put('set/undone/(:num)', 'Task::setTaskUndone/$1');
 });
 
 
