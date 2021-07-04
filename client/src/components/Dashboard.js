@@ -1,6 +1,5 @@
 import React, { useState, Fragment } from 'react';
 import Title from './Title';
-import UserList from './UserList';
 import TaskList from './TaskList';
 import '../main.css';
 import LatestTaskList from './LatestTaskList';
