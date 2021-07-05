@@ -142,7 +142,7 @@ const LatestTaskList = (props) => {
                         refreshTasks(Object.values(tasks))
                         :
                         <TableRow className="fadeoutFast">
-                            <TableCell colSpan="4">Loading tasks</TableCell>
+                            <TableCell colSpan="4" style={{textAlign: 'center'}}>Loading tasks</TableCell>
                         </TableRow>
                     }
                 </TableBody>
