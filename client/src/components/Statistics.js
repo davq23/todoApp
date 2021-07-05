@@ -65,7 +65,9 @@ function Statistics(props) {
     }, [])
 
     return (
-        <Fragment>
+        <div style={{display:'flex', flexDirection:'column', alignItems: 'center'}}>
+
+            <h1>Users per created task</h1>
             {
                 tasksUserCount === null ? (
                     <h1 className="fadeoutFast">Loading...</h1>
@@ -75,7 +77,7 @@ function Statistics(props) {
                     refreshTasksCounts(Object.values(tasksUserCount))
                 )
             }
-        </Fragment>
+        </div>
     )
 }
 
