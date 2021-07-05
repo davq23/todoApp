@@ -75,6 +75,8 @@ const LatestTaskList = (props) => {
 
     useEffect(() => {
         if (props.leftTask) {
+            props.leftTask['taskDone'] = '0';
+
             setTasks({
                 ...tasks,
                 [props.leftTask.taskID]: props.leftTask
